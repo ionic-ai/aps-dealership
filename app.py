@@ -114,8 +114,16 @@ def index():
 
 @app.route('/<path:path>')
 def serve_static(path):
+    # If the exact file exists (like style.css)
     if os.path.exists(os.path.join('static', path)):
         return send_from_directory('static', path)
+    
+    # If a clean URL is requested (like /stock), append .html and look for it
+    html_path = path + '.html'
+    if os.path.exists(os.path.join('static', html_path)):
+        return send_from_directory('static', html_path)
+        
+    # Default fallback
     return send_from_directory('static', 'index.html')
 
 # --- Public API Endpoints ---
