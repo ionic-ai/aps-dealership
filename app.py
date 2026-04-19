@@ -18,6 +18,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SECRET_KEY', 'super-secret-dealership-key')
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_SAMESITE='Lax',
     MAX_CONTENT_LENGTH=16 * 1024 * 1024
 )
@@ -84,6 +85,11 @@ def init_db():
 
     try:
         c.execute("ALTER TABLE vehicles ADD COLUMN description TEXT")
+    except sqlite3.OperationalError:
+        pass
+        
+    try:
+        c.execute("ALTER TABLE vehicles ADD COLUMN status TEXT DEFAULT 'Available'")
     except sqlite3.OperationalError:
         pass
     
