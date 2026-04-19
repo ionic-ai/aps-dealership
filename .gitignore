@@ -1,0 +1,14 @@
+# Database files (Don't expose live customer data)
+*.sqlite
+*.db
+
+# Uploaded images (Cloud servers handle this dynamically)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Python compilation cache
+__pycache__/
+*.pyc
+
+# Local secrets
+.env

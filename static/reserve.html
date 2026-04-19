@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reserve Vehicle | APSJDMCARSLTD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .reserve-card {
+      background-color: var(--bg-secondary);
+      padding: 40px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .step-list { list-style: none; padding: 0; margin: 30px 0; }
+    .step-list li { display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-start; }
+    .step-icon { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(225, 29, 72, 0.1); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; border: 1px solid rgba(225, 29, 72, 0.3); }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="top-bar">
+      <div class="container top-contacts">
+        <span>Available 7 Days a Week for Enquiries</span>
+        <div style="display: flex; gap: 20px;">
+          <a href="tel:07535953623"><i class="fas fa-phone"></i> <span>07535953623</span></a>
+          <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> <span>WhatsApp Us</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="container nav-container">
+      <a href="index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="stock.html">View Stock</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+      <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Reserve a Vehicle</h1>
+      <p>Secure your desired Japanese Import immediately before it sells.</p>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section style="padding: 60px 0;">
+    <div class="container">
+      <div class="reserve-card">
+        <h2 style="text-align: center; margin-bottom: 10px;">Secure It Now</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Due to the high demand and rarity of our stock, vehicles are often sold within 48 hours of arriving. Lock yours in today.</p>
+
+        <ul class="step-list">
+          <li>
+            <div class="step-icon"><i class="fas fa-lock"></i></div>
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 5px;">1. Fully Refundable Deposit</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">We take a small holding deposit which immediately removes the car from the market.</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-icon"><i class="fas fa-calendar-check"></i></div>
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 5px;">2. Arrange a Viewing</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">We will schedule a priority appointment for you to come down, inspect the vehicle, and test drive it.</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-icon"><i class="fas fa-handshake"></i></div>
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 5px;">3. Zero Pressure</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">If the car isn't exactly what you hoped for, we instantly refund 100% of your deposit on the spot. No arguments.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div style="background-color: var(--bg-primary); padding: 25px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.05); margin-top: 30px; text-align: center;">
+          <h3 style="margin-bottom: 15px;">How to Reserve</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">We process deposits securely via bank transfer or over the phone to prevent fraud. Please contact our sales director immediately to place a hold.</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <a href="tel:07535953623" class="btn btn-primary" style="font-size: 1.1rem; padding: 16px;"><i class="fas fa-phone-alt"></i> Call Now: 01234 567 890</a>
+            <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="btn btn-whatsapp" style="font-size: 1.1rem; padding: 16px;"><i class="fab fa-whatsapp"></i> Reserve via WhatsApp</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <a href="index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+          <p>We specialise exclusively in sourcing, importing, and preparing the highest quality Japanese vehicles for the UK market. All vehicles fully registered and inspected.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="stock.html">View Stock</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="cookie-policy.html">Cookie Policy</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:07535953623"><i class="fas fa-phone"></i>07535953623</a></li>
+            <li><a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> WhatsApp Us</a></li>
+            <li><a href="mailto:sales@apsjdmcars.co.uk"><i class="fas fa-envelope"></i>sales@apsjdmcars.co.uk</a></li>
+            <li><i class="fas fa-map-marker-alt"></i> 26B Station Rd, London E12 5BT</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 APSJDMCARSLTD. All rights reserved. (No finance options available at the moment)</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

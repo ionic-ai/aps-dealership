@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">{% if vehicle %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% else %}Vehicle Loading...{% endif %} | APSJDMCARSLTD</title>
+  <meta name="description" content="Outstanding condition {% if vehicle %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% endif %} Japanese import. Contact us to reserve today.">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .gallery-main { width: 100%; max-height: 600px; aspect-ratio: 16/9; object-fit: contain; background: #0f172a; border-radius: var(--radius-md); margin-bottom: 16px; border: 1px solid var(--border-color); }
+    .gallery-thumbs { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+    .gallery-thumbs img { width: 120px; height: 80px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color); cursor: pointer; transition: var(--transition); }
+    .gallery-thumbs img:hover { border-color: var(--accent-primary); opacity: 0.8; }
+    .specs-table { width: 100%; border-collapse: collapse; margin-top: 20px; border-radius: var(--radius-sm); overflow: hidden; }
+    .specs-table tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
+    .specs-table td { padding: 12px 16px; border: 1px solid var(--border-color); font-size: 0.875rem; }
+    .specs-table td:first-child { font-weight: 500; color: var(--text-muted); width: 40%; }
+    .sticky-panel { position: sticky; top: 120px; background-color: var(--bg-secondary); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+    @media (max-width: 900px) { .vehicle-layout { flex-direction: column; } .gallery-main { aspect-ratio: 4/3; max-height: 400px; } }
+  
+    #lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+    #lightbox img { max-width: 95%; max-height: 85vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: contain; }
+    #lightboxClose { position: absolute; top: 20px; right: 30px; color: white; font-size: 2rem; cursor: pointer; }
+
+</style>
+</head>
+<body>
+
+  <div id="lightbox">
+    <i class="fas fa-times" id="lightboxClose"></i>
+    <img id="lightboxImg" src="" alt="Fullscreen Image">
+    <p style="color: white; margin-top: 15px; font-weight: 500;">Swipe or tap outside to close</p>
+  </div>
+  
+
+
+
+  <!-- HEADER -->
+  <header class="scrolled">
+    <div class="top-bar">
+      <div class="container top-contacts">
+        <span>Available 7 Days a Week for Enquiries</span>
+        <div style="display: flex; gap: 20px;">
+          <a href="tel:07535953623"><i class="fas fa-phone"></i> <span>07535953623</span></a>
+          <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> <span>WhatsApp Us</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="container nav-container">
+      <a href="/index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="/logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+      <nav class="nav-links">
+        <a href="/index.html">Home</a>
+        <a href="/stock.html" class="active">View Stock</a>
+        <a href="/about.html">About Us</a>
+        <a href="/contact.html">Contact Us</a>
+      </nav>
+      <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <section style="padding: 180px 0 80px;">
+    <div class="container">
+      
+      <a href="/stock.html" class="btn btn-secondary" style="margin-bottom: 35px; display: inline-flex; align-items: center; gap: 8px; position: relative; z-index: 50; padding: 10px 16px;"><i class="fas fa-arrow-left"></i> Back to all stock</a>
+      
+      <div class="vehicle-layout" id="dynamicVehicleContainer" style="display: none; gap: 40px;">
+        
+        <!-- LEFT COL -->
+        <div style="flex: 2; min-width: 0;">
+          <img src="" alt="Vehicle Image" class="gallery-main" id="vMainImg">
+          <div id="vGallery" style="display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin;"></div>
+
+          <div style="margin-top: 40px;">
+            <h2 style="font-size: 2rem; margin-bottom: 20px;">Vehicle Description</h2>
+            
+            <div id="vOverviewText">
+              <!-- Dynamically populated via JS -->
+            </div>
+
+            <div id="vFeaturesBlock" style="display: none; margin-bottom: 24px;">
+              <h3 style="font-size: 1.25rem; margin: 30px 0 16px;">Key Vehicle Features:</h3>
+              <ul id="vFeaturesList" style="list-style: none; padding-left: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; color: var(--text-muted);">
+              </ul>
+            </div>
+
+            <h3 style="font-size: 1.25rem; margin: 30px 0 16px;">Why choosing a Japanese Import stands out:</h3>
+            <ul style="list-style: disc; padding-left: 20px; color: var(--text-muted); margin-bottom: 24px;">
+              <li style="margin-bottom: 8px;"><strong style="color: var(--text-main);">Unmatched Condition:</strong> Hand-selected from auction with stringent Japanese grading.</li>
+              <li style="margin-bottom: 8px;"><strong style="color: var(--text-main);">High Specification:</strong> Vehicles sourced from Japan typically have significantly higher trim levels than their UK counterparts.</li>
+              <li style="margin-bottom: 8px;"><strong style="color: var(--text-main);">Rust Free:</strong> Salt-free winter roads in Japan preserve the chassis condition indefinitely.</li>
+            </ul>
+
+            <div style="background-color: var(--bg-secondary); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-top: 30px;">
+              <h3 style="color: var(--accent-primary); margin-bottom: 10px;">Don't Miss Out</h3>
+              <p style="font-size: 0.875rem;">These high-specification models are incredibly rare in this condition. Demand is consistently high. Everything has been handled for you. This vehicle is <strong>fully UK registered</strong>, <strong>HPI clear</strong>, and has undergone a rigorous multi-point inspection. We strongly recommend making an enquiry immediately to avoid missing out.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT COL (Sticky Info) -->
+        <div style="flex: 1; min-width: 320px;">
+          <div class="sticky-panel">
+            <h1 id="vTitle" style="font-size: 1.75rem; margin-bottom: 10px;"></h1>
+            
+            <div id="vPrice" style="font-size: 2.5rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 20px;">
+            </div>
+
+            <div style="background-color: #fee2e2; border: 1px solid #ef4444; padding: 12px; border-radius: var(--radius-sm); font-size: 0.875rem; color: #991b1b; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start; font-weight: 500;">
+              <i class="fas fa-exclamation-circle" style="margin-top: 3px;"></i>
+              <span>This vehicle is receiving a high volume of interest. Sales are strictly on a first-come, first-served basis.</span>
+            </div>
+
+            <table class="specs-table">
+              <tr><td>Mileage</td><td id="vMileage"></td></tr>
+              <tr><td>Year</td><td id="vYear"></td></tr>
+              <tr><td>Transmission</td><td id="vTrans"></td></tr>
+              <tr><td>Engine</td><td id="vEngine"></td></tr>
+              <tr><td>Body Type</td><td id="vBodyType">JDM Import</td></tr>
+            </table>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 30px;">
+              <a href="tel:07535953623" class="btn" style="background-color: var(--bg-primary); color: var(--text-main); border: 1px solid var(--border-color);"><i class="fas fa-phone"></i> Call: 01234 567 890</a>
+              <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="btn btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp Us About This Car</a>
+              <a href="/contact.html" class="btn btn-secondary" id="vEnquireBtn"><i class="fas fa-envelope"></i> Enquire About This Vehicle</a>
+              <a href="/reserve.html" class="btn btn-primary"><i class="fas fa-lock"></i> Reserve This Vehicle Now</a>
+            </div>
+            
+            <p style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 16px;">Secure this vehicle with a fully refundable deposit. Stop anyone else from buying it today.</p>
+
+            <div style="display: flex; justify-content: center; gap: 16px; margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+              <span class="badge" style="background-color: transparent;"><i class="fas fa-check-circle" style="color: var(--accent-green);"></i> HPI Clear</span>
+              <span class="badge" style="background-color: transparent;"><i class="fas fa-clipboard-check" style="color: var(--accent-green);"></i> UK Reg</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <div id="loadingState" style="padding: 100px 0; text-align: center; color: var(--text-muted);">
+         <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 20px; color: var(--accent-primary);"></i>
+         <p>Loading vehicle details...</p>
+      </div>
+      <div id="errorState" style="display: none; padding: 100px 0; text-align: center; color: var(--text-muted);">
+         <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 20px; color: var(--accent-primary);"></i>
+         <p>Vehicle not found or no longer available.</p>
+      </div>
+      
+
+      <!-- SIMILAR VEHICLES -->
+      {% if similar %}
+      <div style="margin-top: 60px; border-top: 1px solid var(--border-color); padding-top: 40px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">Similar Vehicles You Might Like</h3>
+        <div class="vehicle-grid">
+          {% for s in similar %}
+          <div class="vehicle-card" onclick="window.location.href='/vehicle/{{ s.id }}'" style="cursor: pointer; position: relative;">
+            <div class="vehicle-img-wrapper" style="height: 180px;">
+               {% if s.status == 'Sold' %}
+               <div style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10; display:flex; align-items:center; justify-content:center;"><span style="background:rgba(220,38,38,0.9); color:white; padding: 5px 15px; font-weight:700; transform:rotate(-15deg); border: 2px solid white;">SOLD</span></div>
+               {% endif %}
+              <img src="{{ s.img_url }}" alt="{{ s.make }} {{ s.model }}">
+            </div>
+            <div class="vehicle-info" style="padding: 15px;">
+              <h3 class="vehicle-title" style="font-size: 1.1rem; margin-bottom: 5px;">{{ s.year }} {{ s.make }} {{ s.model }}</h3>
+              <div class="vehicle-price" style="font-size: 1.25rem;">{{ s.price }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <a href="/index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="/logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+          <p>We specialise exclusively in sourcing, importing, and preparing the highest quality Japanese vehicles for the UK market. All vehicles fully registered and inspected.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/stock.html">View Stock</a></li>
+            <li><a href="/about.html">About Us</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:07535953623"><i class="fas fa-phone"></i>07535953623</a></li>
+            <li><a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> WhatsApp Us</a></li>
+            <li><a href="mailto:sales@apsjdmcars.co.uk"><i class="fas fa-envelope"></i>sales@apsjdmcars.co.uk</a></li>
+            <li><i class="fas fa-map-marker-alt"></i> 26B Station Rd, London E12 5BT</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 APSJDMCARSLTD. All rights reserved. (No finance options available at the moment)</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const id = "{{ vehicle.id if vehicle else '' }}";
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const container = document.getElementById('dynamicVehicleContainer');
+      
+      if(!id) {
+         loadingState.style.display = 'none';
+         errorState.style.display = 'block';
+         return;
+      }
+
+      try {
+        const res = await fetch('/api/vehicles/' + id);
+        if(!res.ok) throw new Error('Not found');
+        const v = await res.json();
+        
+        loadingState.style.display = 'none';
+        container.style.display = 'flex';
+        
+        document.title = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
+        document.getElementById('pageTitle').textContent = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
+        
+        // Sold dynamic check inject
+        const vTitleFull = `${v.year} ${v.make} ${v.model}`;
+        if (v.status === 'Sold') {
+             document.getElementById('vTitle').innerHTML = `<span style="background-color: #dc2626; color: white; padding: 4px 12px; border-radius: 6px; margin-right: 15px; font-weight: 800; display: inline-block; transform: translateY(-3px);">SOLD</span> ${vTitleFull}`;
+             const imgEl = document.getElementById('vMainImg');
+             imgEl.style.filter = 'grayscale(100%)';
+             const wrapper = document.createElement('div');
+             wrapper.style.position = 'relative';
+             wrapper.style.display = 'block';
+             imgEl.parentNode.insertBefore(wrapper, imgEl);
+             wrapper.appendChild(imgEl);
+             wrapper.insertAdjacentHTML('beforeend', `<div style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3); border-radius: var(--radius-md);"><span style="background:rgba(220,38,38,0.9); color:white; padding: 15px 45px; font-size: 3rem; font-weight:900; transform:rotate(-15deg); border: 4px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">SOLD</span></div>`);
+        } else {
+             document.getElementById('vTitle').textContent = vTitleFull;
+        }
+        
+        const vEnq = document.getElementById('vEnquireBtn');
+        if (vEnq) vEnq.href = `/contact.html?vehicle=${encodeURIComponent(vTitleFull)}`;
+
+        document.getElementById('vPrice').textContent = v.price;
+        
+        document.getElementById('vMileage').textContent = v.mileage + ' Miles';
+        document.getElementById('vYear').textContent = v.year;
+        document.getElementById('vTrans').textContent = v.transmission;
+        document.getElementById('vEngine').textContent = v.engine;
+        
+        if(v.body_type) {
+           document.getElementById('vBodyType').textContent = v.body_type;
+        } else {
+           document.getElementById('vBodyType').textContent = 'JDM Import';
+        }
+
+        const mainImg = document.getElementById('vMainImg');
+        const gallery = document.getElementById('vGallery');
+        if (mainImg) {
+            mainImg.src = v.img_url;
+            mainImg.style.cursor = 'zoom-in';
+            mainImg.addEventListener('click', () => {
+                document.getElementById('lightboxImg').src = mainImg.src;
+                document.getElementById('lightbox').style.display = 'flex';
+            });
+            document.getElementById('lightboxClose').addEventListener('click', () => {
+                document.getElementById('lightbox').style.display = 'none';
+            });
+            document.getElementById('lightbox').addEventListener('click', (e) => {
+                if(e.target.id === 'lightbox') document.getElementById('lightbox').style.display = 'none';
+            });
+        }
+        
+        if (gallery) {
+            gallery.innerHTML = ''; // reset
+            let allImages = [v.img_url];
+            if (v.additional_images) {
+                const addImages = v.additional_images.split(',').filter(x => x.trim() !== '');
+                allImages = allImages.concat(addImages);
+            }
+            if (allImages.length > 1) {
+                allImages.forEach(imgSrc => {
+                    const thumb = document.createElement('img');
+                    thumb.src = imgSrc;
+                    thumb.style.cssText = 'width: 100px; height: 75px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; border: 2px solid transparent; opacity: 0.7; transition: all 0.2s;';
+                    if(imgSrc === v.img_url) {
+                       thumb.style.opacity = '1';
+                       thumb.style.borderColor = 'var(--accent-primary)';
+                    }
+                    thumb.addEventListener('mouseenter', () => thumb.style.opacity = '1');
+                    thumb.addEventListener('mouseleave', () => { 
+                       if(mainImg.src.endsWith(imgSrc)) return; 
+                       thumb.style.opacity = '0.7'; 
+                    });
+                    
+                    thumb.addEventListener('click', () => {
+                       mainImg.src = imgSrc;
+                       Array.from(gallery.children).forEach(c => {
+                           c.style.opacity = '0.7';
+                           c.style.borderColor = 'transparent';
+                       });
+                       thumb.style.opacity = '1';
+                       thumb.style.borderColor = 'var(--accent-primary)';
+                    });
+                    gallery.appendChild(thumb);
+                });
+            }
+        }
+
+        const descBlock = document.getElementById('vOverviewText');
+        if (descBlock) {
+            if (v.description) {
+               descBlock.innerHTML = `<p style="margin-bottom: 16px; white-space: pre-wrap;">${v.description}</p>`;
+            } else {
+               descBlock.innerHTML = `
+                 <p style="margin-bottom: 16px;">Exceptional, hand-picked <strong>${v.make} ${v.model}</strong>. Freshly imported from Japan's strictly maintained, salt-free roads, offering a pristine chassis and a verified <strong>${v.mileage} Miles</strong>. High-specification, rust-free, and fully inspected for UK roads.</p>
+              `;
+            }
+        }
+
+        if (v.auction_grade) {
+          const specTable = document.querySelector('.specs-table tbody');
+          if (specTable) {
+            specTable.innerHTML += `<tr><td>Auction Grade</td><td style="font-weight: bold; color: var(--accent-primary);">${v.auction_grade}</td></tr>`;
+          }
+        }
+
+        if (v.features) {
+          document.getElementById('vFeaturesBlock').style.display = 'block';
+          const featureArray = v.features.split(',').map(f => f.trim()).filter(f => f);
+          const fList = document.getElementById('vFeaturesList');
+          fList.innerHTML = '';
+          featureArray.forEach(f => {
+            fList.innerHTML += `<li style="display: flex; gap: 10px; align-items: center;"><i class="fas fa-check-circle" style="color: var(--accent-primary);"></i> <span>${f}</span></li>`;
+          });
+        }
+      } catch(e) {
+        console.error(e);
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

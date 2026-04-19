@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dealership Command Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .admin-container { max-width: 95%; margin: 120px auto 40px auto; padding: 20px; }
+    .hidden { display: none !important; }
+    
+    #loginScreen { max-width: 400px; margin: 0 auto; background-color: var(--bg-secondary); padding: 40px; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-color); }
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 0.875rem; color: var(--text-muted); }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm); font-family: var(--font-base); }
+    
+    #adminDashboard { background-color: var(--bg-secondary); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    
+    .dashboard-kpis { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+    .kpi-card { flex: 1; min-width: 200px; background-color: var(--bg-primary); padding: 25px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .kpi-value { font-size: 3rem; font-weight: 900; color: var(--accent-primary); line-height: 1; margin-bottom: 8px; }
+    .kpi-label { font-size: 0.875rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+    .dashboard-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 30px; }
+    @media (max-width: 1100px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    
+    .table-container { background-color: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-color); padding: 20px; max-height: 600px; overflow-y: auto; }
+    .table-container::-webkit-scrollbar { width: 8px; }
+    .table-container::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 4px; }
+    
+    table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+    th { position: sticky; top: -20px; background-color: #0f172a; z-index: 5; padding: 15px 12px; border-bottom: 2px solid var(--border-color); text-align: left; font-weight: 600; font-size: 0.875rem; color: var(--text-muted); }
+    td { text-align: left; padding: 15px 12px; border-bottom: 1px solid var(--border-color); font-size: 0.875rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: rgba(255,255,255,0.02); }
+    
+    .delete-btn { color: var(--accent-primary); background: none; border: none; cursor: pointer; font-size: 1rem; transition: transform 0.2s; }
+    .delete-btn:hover { transform: scale(1.1); }
+    
+    select.quick-status { padding: 6px 10px; background-color: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    select.quick-status.Sold { background-color: rgba(220, 38, 38, 0.2); color: #fca5a5; border-color: #dc2626; }
+    select.quick-status.Reserved { background-color: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: #10b981; }
+
+    /* MODAL */
+    #vehicleModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 9999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+    .modal-content { background: var(--bg-secondary); padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; }
+    .modal-close { position: absolute; top: 20px; right: 25px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+    .modal-close:hover { color: var(--accent-primary); }
+    
+    .filter-bar { display: flex; gap: 15px; margin-bottom: 15px; }
+    .filter-bar input { flex: 1; padding: 10px 15px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-main); font-size: 0.875rem; }
+  
+    /* Center Nav on Admin */
+    @media (min-width: 900px) {
+      nav.container { position: relative; }
+      .nav-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="scrolled">
+    <div class="top-bar">
+      <div class="container top-contacts">
+        <span>Available 7 Days a Week for Enquiries</span>
+        <span>Viewing By Appointment Only</span>
+      </div>
+    </div>
+    <nav class="container">
+      <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px;"><img src="logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="stock.html">Current Stock</a>
+        <a href="about.html">Why Buy JDM?</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+    </nav>
+  </header>
+
+  <div class="admin-container">
+    
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen">
+      <h2 style="margin-bottom: 20px;"><i class="fas fa-lock"></i> Secure Admin Portal</h2>
+      <div id="loginError" style="color: var(--accent-primary); margin-bottom: 10px; font-size: 0.875rem;" class="hidden">Invalid credentials.</div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="passwordInput" required placeholder="Enter secret password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+      </form>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="adminDashboard" class="hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+        <h2 style="font-size: 2rem;"><i class="fas fa-satellite-dish"></i> Command Center</h2>
+        <div style="display: flex; gap: 15px;">
+           <button id="addCarBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Add New Vehicle</button>
+           <button id="logoutBtn" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="dashboard-kpis">
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiTotal">0</div>
+          <div class="kpi-label">Active Vehicles</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiReserved" style="color: #10b981;">0</div>
+          <div class="kpi-label">Vehicles Reserved</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpiEnquiries" style="color: #3b82f6;">0</div>
+          <div class="kpi-label">Open Enquiries</div>
+        </div>
+      </div>
+
+      <!-- DATA GRID -->
+      <div class="dashboard-grid">
+        
+        <!-- Inventory Table -->
+        <div class="table-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+             <h3 style="font-size: 1.25rem;"><i class="fas fa-car-side"></i> Live Inventory</h3>
+             <span id="stockCount" style="color: var(--text-muted); font-size: 0.875rem;"></span>
+          </div>
+          <div class="filter-bar">
+             <i class="fas fa-search" style="position: absolute; margin: 12px 15px; color: var(--text-muted);"></i>
+             <input type="text" id="adminSearchStock" placeholder="Filter by Make, Model, or ID..." style="padding-left: 40px;">
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Vehicle Details</th>
+                <th>Listing Price</th>
+                <th>Status Toggle</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody id="stockTableBody">
+              <!-- JS Populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Enquiries Table -->
+        <div class="table-container">
+          <h3 style="margin-bottom: 20px; font-size: 1.25rem;"><i class="fas fa-inbox"></i> Customer Enquiries</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Date received</th>
+                <th>Contact Details</th>
+                <th>Interest / Action</th>
+              </tr>
+            </thead>
+            <tbody id="enquiryTableBody">
+              <!-- JS Populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD/EDIT VEHICLE -->
+  <div id="vehicleModal">
+    <div class="modal-content">
+      <i class="fas fa-times modal-close" id="closeModalBtn"></i>
+      <h3 style="margin-bottom: 25px; font-size: 1.5rem; color: var(--accent-primary);" id="formTitle">Launch New Vehicle</h3>
+      <form id="addVehicleForm">
+        <input type="hidden" id="edit_vehicle_id">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group"><label>Make *</label><input type="text" id="make" required placeholder="e.g. Toyota"></div>
+            <div class="form-group"><label>Model & Trim *</label><input type="text" id="model" required placeholder="e.g. Alphard Exec Lounge"></div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <div class="form-group"><label>Year *</label><input type="text" id="year" required></div>
+          <div class="form-group"><label>Price *</label><input type="text" id="price" placeholder="e.g. £15,000" required></div>
+          <div class="form-group"><label>Body Type *</label>
+            <select id="body_type" required>
+              <option value="" disabled selected>Select Body</option>
+              <option value="MPV">MPV</option>
+              <option value="Estate">Estate</option>
+              <option value="Saloon">Saloon</option>
+              <option value="SUV">SUV</option>
+              <option value="Hatchback">Hatchback</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+          <div class="form-group"><label>Mileage *</label><input type="text" id="mileage" placeholder="e.g. 32000" required></div>
+          <div class="form-group"><label>Transmission *</label><input type="text" id="transmission" value="Automatic" required></div>
+          <div class="form-group"><label>Engine *</label><input type="text" id="engine" required></div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+           <div class="form-group"><label>Auction Grade (Optional)</label><input type="text" id="auction_grade" placeholder="e.g. 4.5"></div>
+           <div class="form-group"><label>Highlight Tag (Optional)</label><input type="text" id="tags" placeholder="e.g. 🔥 Highly Requested"></div>
+        </div>
+        
+        <div class="form-group"><label>Key Features (Optional)</label><input type="text" id="features" placeholder="e.g. Dual Power Doors, 360 Camera"></div>
+        <div class="form-group"><label>Unique Description (Optional)</label><textarea id="description" rows="3" placeholder="Craft a custom description to display on the vehicle details page..."></textarea></div>
+        
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+           <div class="form-group"><label id="imgLabel">Upload Images (Select Multiple, First is Main)</label><input type="file" id="img_upload" accept="image/*" multiple style="padding: 7px;"></div>
+           <div class="form-group"><label>Visibility Status</label>
+             <select id="status">
+                <option value="Available">Available</option>
+                <option value="Reserved">Reserved</option>
+                <option value="Sold">Sold</option>
+             </select>
+           </div>
+        </div>
+        
+        <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; text-align: right;">
+           <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="margin-right: 15px;">Cancel</button>
+           <button type="submit" id="submitBtn" class="btn btn-primary" style="padding: 12px 30px;">Deploy to Stock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

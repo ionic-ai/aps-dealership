@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock List | Japanese Import Cars for Sale UK</title>
+  <meta name="description" content="Browse our current stock of UK registered, low-mileage Japanese imports. View our range of Toyota Alphards, Nissan Elgrands, and premium estates.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+
+  
+
+
+
+  <!-- HEADER -->
+  <header class="scrolled">
+    <div class="top-bar">
+      <div class="container top-contacts">
+        <span>Available 7 Days a Week for Enquiries</span>
+        <div style="display: flex; gap: 20px;">
+          <a href="tel:07535953623"><i class="fas fa-phone"></i> <span>07535953623</span></a>
+          <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> <span>WhatsApp Us</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="container nav-container">
+      <a href="index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="stock.html" class="active">View Stock</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+      <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <section style="padding: 150px 0 60px; background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color);">
+    <div class="container">
+      <h1 style="font-size: 3rem; margin-bottom: 10px;">Our Current Stock</h1>
+      <p style="color: var(--text-muted); font-size: 1.125rem; max-width: 600px;">Hand-picked, premium Japanese imports. Our stock changes daily—if you see a vehicle you want, contact us immediately to reserve it.</p>
+    </div>
+  </section>
+
+  <!-- STOCK LISTING -->
+  <section style="padding: 60px 0;">
+    <div class="container">
+      <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+        
+        <!-- SIDEBAR FILTERS (UI ONLY) -->
+        <div style="flex: 1; min-width: 250px; background-color: var(--bg-secondary); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-color); height: fit-content; position: sticky; top: 120px;">
+          <h3 style="margin-bottom: 20px;">Filter Stock</h3>
+          
+                    <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted);">Search Keyword</label>
+            <input type="text" id="filterKeyword" placeholder="e.g. Hybrid, Alphard..." style="width: 100%; padding: 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm); font-family: var(--font-base);">
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted);">Make</label>
+            <div class="custom-select-wrapper" style="position: relative;">
+              <select id="filterMake" style="display: none;">
+                <option value="Any Make">Any Make</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Nissan">Nissan</option>
+                <option value="Honda">Honda</option>
+              </select>
+              <div class="custom-select" style="width: 100%; padding: 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm); cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <span class="custom-select-trigger">Any Make</span>
+                <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: var(--text-muted); transition: transform 0.3s ease;"></i>
+              </div>
+              <div class="custom-options" style="position: absolute; top: 100%; left: 0; right: 0; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 0 0 var(--radius-sm) var(--radius-sm); z-index: 10; display: none; margin-top: 4px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <div class="custom-option" data-value="Any Make" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Any Make</div>
+                <div class="custom-option" data-value="Toyota" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Toyota</div>
+                <div class="custom-option" data-value="Nissan" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Nissan</div>
+                <div class="custom-option" data-value="Honda" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;">Honda</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted);">Maximum Price</label>
+            <div class="custom-select-wrapper" style="position: relative;">
+              <select id="filterPrice" style="display: none;">
+                <option value="No Max">No Max</option>
+                <option value="Up to £10,000">Up to £10,000</option>
+                <option value="Up to £15,000">Up to £15,000</option>
+                <option value="Up to £20,000">Up to £20,000</option>
+              </select>
+              <div class="custom-select" style="width: 100%; padding: 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm); cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <span class="custom-select-trigger">No Max</span>
+                <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: var(--text-muted); transition: transform 0.3s ease;"></i>
+              </div>
+              <div class="custom-options" style="position: absolute; top: 100%; left: 0; right: 0; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 0 0 var(--radius-sm) var(--radius-sm); z-index: 10; display: none; margin-top: 4px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <div class="custom-option" data-value="No Max" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">No Max</div>
+                <div class="custom-option" data-value="Up to £10,000" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Up to £10,000</div>
+                <div class="custom-option" data-value="Up to £15,000" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Up to £15,000</div>
+                <div class="custom-option" data-value="Up to £20,000" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;">Up to £20,000</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted);">Body Type</label>
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.875rem;">
+              <label style="display: flex; gap: 10px; cursor: pointer;"><input type="checkbox" class="body-filter" value="MPV"> MPV (People Carrier)</label>
+              <label style="display: flex; gap: 10px; cursor: pointer;"><input type="checkbox" class="body-filter" value="Estate"> Estate</label>
+              <label style="display: flex; gap: 10px; cursor: pointer;"><input type="checkbox" class="body-filter" value="Saloon"> Saloon</label>
+              <label style="display: flex; gap: 10px; cursor: pointer;"><input type="checkbox" class="body-filter" value="SUV"> SUV</label>
+              <label style="display: flex; gap: 10px; cursor: pointer;"><input type="checkbox" class="body-filter" value="Hatchback"> Hatchback</label>
+            </div>
+          </div>
+          
+          <button id="applyFiltersBtn" class="btn btn-primary" style="width: 100%;">Apply Filters</button>
+        </div>
+
+        <!-- VEHICLES MAIN COLUMN -->
+        <div style="flex: 3; min-width: 300px;">
+          
+          <!-- Banner -->
+          <div style="background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px 24px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <i class="fab fa-whatsapp" style="font-size: 1.5rem; color: var(--accent-green);"></i>
+              <div>
+                <strong style="display: block;">Prefer to chat?</strong>
+                <span style="font-size: 0.875rem; color: var(--text-muted);">Message us on WhatsApp with your requirements and we'll help you find the right car.</span>
+              </div>
+            </div>
+            <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="btn btn-whatsapp" style="padding: 8px 16px; font-size: 0.875rem;">Message Us</a>
+          </div>
+
+          <div class="vehicle-grid" id="dynamicVehicleGrid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+            <div style="padding: 20px; color: var(--text-muted);">Loading current stock...</div>
+          </div>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', async () => {
+              let allVehicles = [];
+              try {
+                const res = await fetch('/api/vehicles');
+                allVehicles = await res.json();
+                renderVehicles(allVehicles);
+              } catch(e) {
+                console.error("Error fetching vehicles:", e);
+                document.getElementById('dynamicVehicleGrid').innerHTML = '<div style="padding: 20px;">Error loading live stock. Please refresh or call us directly.</div>';
+              }
+
+              function renderVehicles(vehicles) {
+                const grid = document.getElementById('dynamicVehicleGrid');
+                if(vehicles.length === 0) {
+                  grid.innerHTML = '<div style="padding: 20px;">No vehicles currently match your filters. Check back later or broaden your search.</div>';
+                  return;
+                }
+
+                grid.innerHTML = '';
+                vehicles.forEach(v => {
+                  let tagHtml = '';
+                  if(v.tags) {
+                    let bgColor = 'var(--accent-primary)';
+                    if(v.tags.includes('Booked')) bgColor = 'var(--accent-green)';
+                    if(v.tags.includes('Just')) bgColor = '#3b82f6';
+                    tagHtml = `<span class="vehicle-tag" style="background-color: ${bgColor};">${v.tags}</span>`;
+                  }
+                  
+                  let fomoHtml = '';
+                  let fomoOverlay = '';
+                  if (v.status === 'Sold') {
+                     fomoHtml = `<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; justify-content: center;"><span style="background: rgba(220,38,38,0.9); color: white; padding: 10px 30px; font-size: 1.5rem; font-weight: 700; transform: rotate(-15deg); border: 2px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">SOLD</span></div>`;
+                  } else if (v.status === 'Reserved') {
+                     let resUrl = `/contact.html?vehicle=${encodeURIComponent(v.year + ' ' + v.make + ' ' + v.model)}&message=${encodeURIComponent('I wish to be notified if the reservist pulls out of the sale for the ' + v.year + ' ' + v.make + ' ' + v.model + '.')}`;
+                     fomoHtml = `<div onclick="event.stopPropagation(); window.location.href='${resUrl}'" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(16, 185, 129, 0.95); color: white; text-align: center; padding: 12px; font-weight: 700; z-index: 20; cursor: pointer; backdrop-filter: blur(4px); box-shadow: 0 -4px 15px rgba(0,0,0,0.3);">RESERVED (Click to be notified if sale falls through)</div>`;
+                  }
+
+                  grid.innerHTML += `
+                    <div class="vehicle-card" onclick="window.location.href='/vehicle/${v.id}'" style="cursor: pointer; position: relative;">
+                      ${fomoHtml}
+                      <div class="vehicle-img-wrapper" style="${v.status === 'Sold' ? 'filter: grayscale(100%);' : ''}">
+                        ${tagHtml}
+                        <img src="${v.img_url}" alt="${v.make} ${v.model}">
+                      </div>
+                      <div class="vehicle-info" style="${v.status === 'Sold' ? 'opacity: 0.6;' : ''}">
+                        <h3 class="vehicle-title">${v.year} ${v.make} ${v.model}</h3>
+                        <div class="vehicle-price">${v.price}</div>
+                        <div class="vehicle-specs">
+                          <div class="spec-item"><i class="fas fa-calendar"></i> ${v.year}</div>
+                          <div class="spec-item"><i class="fas fa-road"></i> ${v.mileage} Miles</div>
+                          <div class="spec-item"><i class="fas fa-gas-pump"></i> ${v.engine}</div>
+                          <div class="spec-item"><i class="fas fa-cogs"></i> ${v.transmission}</div>
+                        </div>
+                        <div class="vehicle-actions">
+                          <a href="/vehicle/${v.id}" class="btn btn-secondary" onclick="event.stopPropagation()">View Details</a>
+                          <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="btn btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                });
+              }
+
+              document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+                                  const keyword = document.getElementById('filterKeyword').value.toLowerCase();
+                 const makeList = document.getElementById('filterMake').value;
+                 const priceText = document.getElementById('filterPrice').value;
+                 const bodyCheckboxes = Array.from(document.querySelectorAll('.body-filter:checked')).map(cb => cb.value.toLowerCase());
+                 
+                 const filtered = allVehicles.filter(v => {
+                                        // Keyword filter
+                    if (keyword && !`${v.year} ${v.make} ${v.model} ${v.description} ${v.tags}`.toLowerCase().includes(keyword)) return false;
+                    
+                    // Make filter
+                    if (makeList !== 'Any Make' && v.make.toLowerCase() !== makeList.toLowerCase()) return false;
+                    
+                    // Price filter
+                    if (priceText !== 'No Max') {
+                        let maxVal = parseInt(priceText.replace(/[^0-9]/g, ''));
+                        let vPrice = parseInt((v.price || '0').replace(/[^0-9]/g, ''));
+                        if (maxVal && vPrice > maxVal) return false;
+                    }
+                    
+                    // Body Type filter
+                    if (bodyCheckboxes.length > 0) {
+                        let vBody = (v.body_type || 'jdm import').toLowerCase();
+                        if (!bodyCheckboxes.some(b => vBody.includes(b))) return false;
+                    }
+                    
+                    return true;
+                 });
+                 
+                 renderVehicles(filtered);
+              });
+            });
+
+            // Custom Select UI Logic
+            document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+              const selectTrigger = wrapper.querySelector('.custom-select');
+              const selectOptions = wrapper.querySelector('.custom-options');
+              const customOptions = wrapper.querySelectorAll('.custom-option');
+              const realSelect = wrapper.querySelector('select');
+              const chevron = wrapper.querySelector('.custom-select .fas');
+
+              selectTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Close any other open dropdowns first
+                document.querySelectorAll('.custom-options').forEach(opt => {
+                  if(opt !== selectOptions) {
+                    opt.style.display = 'none';
+                    if (opt.previousElementSibling) {
+                      const chevronFound = opt.previousElementSibling.querySelector('.fas');
+                      if (chevronFound) chevronFound.style.transform = 'rotate(0deg)';
+                      opt.previousElementSibling.style.borderColor = 'var(--border-color)';
+                    }
+                  }
+                });
+
+                const isBlock = selectOptions.style.display === 'block';
+                selectOptions.style.display = isBlock ? 'none' : 'block';
+                chevron.style.transform = isBlock ? 'rotate(0deg)' : 'rotate(180deg)';
+                if (!isBlock) {
+                  selectTrigger.style.borderColor = 'var(--accent-primary)';
+                } else {
+                  selectTrigger.style.borderColor = 'var(--border-color)';
+                }
+              });
+
+              customOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  selectTrigger.querySelector('.custom-select-trigger').textContent = this.textContent;
+                  if(realSelect) realSelect.value = this.getAttribute('data-value');
+                  selectOptions.style.display = 'none';
+                  chevron.style.transform = 'rotate(0deg)';
+                  selectTrigger.style.borderColor = 'var(--border-color)';
+                });
+
+                option.addEventListener('mouseenter', () => option.style.backgroundColor = 'var(--bg-secondary)');
+                option.addEventListener('mouseleave', () => option.style.backgroundColor = 'transparent');
+              });
+            });
+
+            window.addEventListener('click', function() {
+              document.querySelectorAll('.custom-options').forEach(opt => {
+                opt.style.display = 'none';
+                if (opt.previousElementSibling) {
+                  const chevronFound = opt.previousElementSibling.querySelector('.fas');
+                  if (chevronFound) chevronFound.style.transform = 'rotate(0deg)';
+                  opt.previousElementSibling.style.borderColor = 'var(--border-color)';
+                }
+              });
+            });
+          </script>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <a href="index.html" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+          <p>We specialise exclusively in sourcing, importing, and preparing the highest quality Japanese vehicles for the UK market. All vehicles fully registered and inspected.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="stock.html">View Stock</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="cookie-policy.html">Cookie Policy</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="tel:07535953623"><i class="fas fa-phone"></i>07535953623</a></li>
+            <li><a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> WhatsApp Us</a></li>
+            <li><a href="mailto:sales@apsjdmcars.co.uk"><i class="fas fa-envelope"></i>sales@apsjdmcars.co.uk</a></li>
+            <li><i class="fas fa-map-marker-alt"></i> 26B Station Rd, London E12 5BT</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 APSJDMCARSLTD. All rights reserved. (No finance options available at the moment)</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

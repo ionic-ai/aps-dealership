@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APSJDMCARSLTD | Links</title>
+  <meta name="description" content="Click the links below to view our stock, chat on WhatsApp, or find out more.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .social-logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+    }
+    .social-logo span {
+      color: var(--accent-primary);
+    }
+    .social-bio {
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      font-size: 0.95rem;
+      max-width: 400px;
+    }
+    .link-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 18px 20px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
+    .social-link:hover {
+      background-color: var(--border-color);
+      border-color: var(--text-muted);
+      transform: translateY(-2px);
+    }
+    .social-link.highlight {
+      background-color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: white;
+    }
+    .social-link.highlight:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    .social-link.whatsapp {
+      background-color: var(--accent-green);
+      border-color: var(--accent-green);
+      color: white;
+    }
+    .social-link.whatsapp:hover {
+      background-color: #0ea5e9; /* fallback */
+      filter: brightness(1.1);
+    }
+    .social-icon {
+      font-size: 1.3rem;
+    }
+    .social-footer {
+      margin-top: auto;
+      padding-top: 40px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="social-logo" style="display: flex; flex-direction: column; align-items: center; gap: 10px;"><img src="logojdm.png" alt="APS JDM CARS LTD" class="footer-logo-img"><div>APS<span>JDM</span>CARS LTD</div></div>
+  <p class="social-bio">Premium Japanese Imports 🇯🇵<br>Min 6 Months Warranty | Fully UK Registered</p>
+
+  <div class="link-container">
+    <a href="stock.html" class="social-link highlight">
+      <i class="fas fa-car social-icon"></i> View Current Stock
+    </a>
+    
+    <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="social-link whatsapp">
+      <i class="fab fa-whatsapp social-icon"></i> Chat on WhatsApp
+    </a>
+    
+    <a href="tel:07535953623" class="social-link">
+      <i class="fas fa-phone-alt social-icon"></i> Call the Dealership
+    </a>
+    
+    <a href="contact.html" class="social-link">
+      <i class="fas fa-envelope social-icon"></i> Send an Enquiry
+    </a>
+
+    <a href="index.html" class="social-link" style="background: transparent; border-style: dashed; margin-top: 10px;">
+      <i class="fas fa-globe social-icon"></i> Visit Full Website
+    </a>
+  </div>
+
+  <div class="social-footer">
+    123 Dealership Road, UK<br>
+    Viewing By Appointment Only
+  </div>
+
+</body>
+</html>
