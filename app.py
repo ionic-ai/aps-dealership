@@ -6,7 +6,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import sqlite3
 import os
 import smtplib
+import mimetypes
 from email.mime.text import MIMEText
+
+# Force Render/Gunicorn to explicitly recognize frontend web languages
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('application/javascript', '.js')
 
 app = Flask(__name__, static_folder='static', template_folder='static')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
