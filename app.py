@@ -13,7 +13,10 @@ from email.mime.text import MIMEText
 mimetypes.add_type('text/css', '.css')
 mimetypes.add_type('application/javascript', '.js')
 
+
 app = Flask(__name__, static_folder='static', template_folder='static')
+STORAGE_DIR = os.environ.get('STORAGE_DIR', 'static')
+
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get('SECRET_KEY', 'super-secret-dealership-key')
 app.config.update(
@@ -36,15 +39,16 @@ def compress_image(file_obj):
         hsize = int((float(img.height) * float(wpercent)))
         img = img.resize((base_width, hsize), Image.Resampling.LANCZOS)
     safe_filename = str(uuid.uuid4()) + '.webp'
-    os.makedirs(os.path.join('static', 'uploads'), exist_ok=True)
-    upload_path = os.path.join('static', 'uploads', safe_filename)
+    upload_folder = os.path.join(STORAGE_DIR, 'uploads')
+    os.makedirs(upload_folder, exist_ok=True)
+    upload_path = os.path.join(upload_folder, safe_filename)
     img.save(upload_path, 'webp', optimize=True, quality=80)
     return safe_filename
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-DB_FILE = 'database.sqlite'
+DB_FILE = os.path.join(STORAGE_DIR, 'database.sqlite') if STORAGE_DIR != 'static' else 'database.sqlite'
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -114,7 +118,14 @@ def add_security_headers(response):
     return response
 
 # --- Serve Static Content ---
+
+@app.route('/uploads/<filename>')
+def serve_uploads(filename):
+    upload_folder = os.path.join(STORAGE_DIR, 'uploads')
+    return send_from_directory(upload_folder, filename)
+
 @app.route('/')
+
 def index():
     return send_from_directory('static', 'index.html')
 
@@ -188,12 +199,12 @@ def add_vehicle():
     for idx, file in enumerate(files):
         if file and file.filename and allowed_file(file.filename):
             new_filename = compress_image(file)
-            upload_path = os.path.join('static', 'uploads', new_filename)
+            pass # Handled conceptually by uploads route
             
             if idx == 0:
-                img_url = f"/{upload_path}"
+                img_url = f"/uploads/{new_filename}"
             else:
-                additional_images.append(f"/{upload_path}")
+                additional_images.append(f"/uploads/{new_filename}")
 
     if not img_url:
         img_url = request.form.get('img_url', '')
@@ -227,12 +238,12 @@ def edit_vehicle(id):
         if file and file.filename and allowed_file(file.filename):
             has_files = True
             new_filename = compress_image(file)
-            upload_path = os.path.join('static', 'uploads', new_filename)
+            pass # Handled conceptually by uploads route
             
             if idx == 0:
-                img_url = f"/{upload_path}"
+                img_url = f"/uploads/{new_filename}"
             else:
-                additional_images.append(f"/{upload_path}")
+                additional_images.append(f"/uploads/{new_filename}")
                 
     additional_images_str = ",".join(additional_images)
     
