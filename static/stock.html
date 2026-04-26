@@ -22,7 +22,7 @@
         <span>Available 7 Days a Week for Enquiries</span>
         <div style="display: flex; gap: 20px;">
           <a href="tel:07535953623"><i class="fas fa-phone"></i> <span>07535953623</span></a>
-          <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> <span>WhatsApp Us</span></a>
+          <a href="https://wa.me/447721733169?text=Hi,%20I%20am%20reaching%20out%20from%20the%20website"><i class="fab fa-whatsapp"></i> <span>WhatsApp Us</span></a>
         </div>
       </div>
     </div>
@@ -130,7 +130,7 @@
                 <span style="font-size: 0.875rem; color: var(--text-muted);">Message us on WhatsApp with your requirements and we'll help you find the right car.</span>
               </div>
             </div>
-            <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="btn btn-whatsapp" style="padding: 8px 16px; font-size: 0.875rem;">Message Us</a>
+            <a href="https://wa.me/447721733169?text=Hi,%20I%20am%20reaching%20out%20from%20the%20website" class="btn btn-whatsapp" style="padding: 8px 16px; font-size: 0.875rem;">Message Us</a>
           </div>
 
           <div class="vehicle-grid" id="dynamicVehicleGrid">
@@ -193,7 +193,7 @@
                         </div>
                         <div class="vehicle-actions">
                           <a href="/vehicle/${v.id}" class="btn btn-secondary" onclick="event.stopPropagation()">View Details</a>
-                          <a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car" class="btn btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i></a>
+                          <a href="https://wa.me/447721733169?text=${encodeURIComponent(`Hi, I am interested in the ${v.year} ${v.make} ${v.model} (£${v.price}) on the website.`)}" class="btn btn-whatsapp" onclick="event.stopPropagation()"><i class="fab fa-whatsapp"></i></a>
                         </div>
                       </div>
                     </div>
@@ -322,7 +322,7 @@
           <h4>Contact</h4>
           <ul>
             <li><a href="tel:07535953623"><i class="fas fa-phone"></i>07535953623</a></li>
-            <li><a href="https://wa.me/447721733169?text=Hi%20I'm%20interested%20in%20a%20car"><i class="fab fa-whatsapp"></i> WhatsApp Us</a></li>
+            <li><a href="https://wa.me/447721733169?text=Hi,%20I%20am%20reaching%20out%20from%20the%20website"><i class="fab fa-whatsapp"></i> WhatsApp Us</a></li>
             <li><a href="mailto:sales@apsjdmcars.uk"><i class="fas fa-envelope"></i>sales@apsjdmcars.uk</a></li>
             <li><i class="fas fa-map-marker-alt"></i> 26B Station Rd, London E12 5BT</li>
           </ul>
