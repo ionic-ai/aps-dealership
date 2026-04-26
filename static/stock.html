@@ -178,6 +178,23 @@
                 });
                 makeSelect.innerHTML = selectHTML;
                 makeOptionsDiv.innerHTML = customHTML;
+                
+                // Rebind click listeners for dynamically inserted Make options
+                makeOptionsDiv.querySelectorAll('.custom-option').forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const wrapper = option.closest('.custom-select-wrapper');
+                        wrapper.querySelector('.custom-select-trigger').textContent = this.textContent;
+                        wrapper.querySelector('select').value = this.getAttribute('data-value');
+                        if (window.executeFilters) window.executeFilters();
+                        wrapper.querySelector('.custom-options').style.display = 'none';
+                        wrapper.querySelector('.fas').style.transform = 'rotate(0deg)';
+                        wrapper.querySelector('.custom-select').style.borderColor = 'var(--border-color)';
+                    });
+                    option.addEventListener('mouseenter', () => option.style.backgroundColor = 'var(--bg-secondary)');
+                    option.addEventListener('mouseleave', () => option.style.backgroundColor = 'transparent');
+                });
+
 
                 renderVehicles(allVehicles);
               } catch(e) {
