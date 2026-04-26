@@ -163,7 +163,10 @@
                 allVehicles.sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
 
                 // Dynamically populate Make dropdown based on actual live stock
-                const uniqueMakes = [...new Set(allVehicles.map(v => v.make))].filter(Boolean).sort();
+                const uniqueMakes = [...new Set(allVehicles.map(v => {
+                    let m = v.make ? v.make.trim() : '';
+                    return m.charAt(0).toUpperCase() + m.slice(1).toLowerCase();
+                }))].filter(Boolean).sort();
                 const makeSelect = document.getElementById('filterMake');
                 const makeOptionsDiv = makeSelect.closest('.custom-select-wrapper').querySelector('.custom-options');
                 let selectHTML = '<option value="Any Make">Any Make</option>';
@@ -234,7 +237,7 @@
                 });
               }
 
-              document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+              window.executeFilters = function() {
                                   const keyword = document.getElementById('filterKeyword').value.toLowerCase();
                  const makeList = document.getElementById('filterMake').value;
                  const priceText = document.getElementById('filterPrice').value;
@@ -272,7 +275,10 @@
                  }
 
                  renderVehicles(filtered);
-              });
+              };
+document.getElementById('applyFiltersBtn').addEventListener('click', window.executeFilters);
+document.getElementById('filterKeyword').addEventListener('input', window.executeFilters);
+document.querySelectorAll('.body-filter').forEach(cb => cb.addEventListener('change', window.executeFilters));
             });
 
             // Custom Select UI Logic
@@ -312,6 +318,7 @@
                   e.stopPropagation();
                   selectTrigger.querySelector('.custom-select-trigger').textContent = this.textContent;
                   if(realSelect) realSelect.value = this.getAttribute('data-value');
+if(window.executeFilters) window.executeFilters();
                   selectOptions.style.display = 'none';
                   chevron.style.transform = 'rotate(0deg)';
                   selectTrigger.style.borderColor = 'var(--border-color)';
