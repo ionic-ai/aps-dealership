@@ -143,6 +143,7 @@
               try {
                 const res = await fetch('/api/vehicles');
                 allVehicles = await res.json();
+                allVehicles.sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
                 renderVehicles(allVehicles);
               } catch(e) {
                 console.error("Error fetching vehicles:", e);
