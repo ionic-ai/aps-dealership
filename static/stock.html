@@ -103,6 +103,23 @@
               </div>
             </div>
           </div>
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted);">Sort By</label>
+            <div class="custom-select-wrapper" style="position: relative;">
+              <select id="filterSort" style="display: none;">
+                <option value="Price: Low to High">Price: Low to High</option>
+                <option value="Price: High to Low">Price: High to Low</option>
+              </select>
+              <div class="custom-select" style="width: 100%; padding: 10px; background-color: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm); cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <span class="custom-select-trigger">Price: Low to High</span>
+                <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: var(--text-muted); transition: transform 0.3s ease;"></i>
+              </div>
+              <div class="custom-options" style="position: absolute; top: 100%; left: 0; right: 0; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 0 0 var(--radius-sm) var(--radius-sm); z-index: 10; display: none; margin-top: 4px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <div class="custom-option" data-value="Price: Low to High" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Price: Low to High</div>
+                <div class="custom-option" data-value="Price: High to Low" style="padding: 10px 14px; cursor: pointer; transition: background 0.2s;">Price: High to Low</div>
+              </div>
+            </div>
+          </div>
           
           <div style="margin-bottom: 20px;">
             <label style="display: block; margin-bottom: 8px; font-size: 0.875rem; color: var(--text-muted);">Body Type</label>
@@ -144,6 +161,21 @@
                 const res = await fetch('/api/vehicles');
                 allVehicles = await res.json();
                 allVehicles.sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
+
+                // Dynamically populate Make dropdown based on actual live stock
+                const uniqueMakes = [...new Set(allVehicles.map(v => v.make))].filter(Boolean).sort();
+                const makeSelect = document.getElementById('filterMake');
+                const makeOptionsDiv = makeSelect.closest('.custom-select-wrapper').querySelector('.custom-options');
+                let selectHTML = '<option value="Any Make">Any Make</option>';
+                let customHTML = '<div class="custom-option" data-value="Any Make" style="padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); transition: background 0.2s;">Any Make</div>';
+                uniqueMakes.forEach((make, index) => {
+                    selectHTML += `<option value="${make}">${make}</option>`;
+                    const border = (index === uniqueMakes.length - 1) ? '' : 'border-bottom: 1px solid var(--border-color);';
+                    customHTML += `<div class="custom-option" data-value="${make}" style="padding: 10px 14px; cursor: pointer; ${border} transition: background 0.2s;">${make}</div>`;
+                });
+                makeSelect.innerHTML = selectHTML;
+                makeOptionsDiv.innerHTML = customHTML;
+
                 renderVehicles(allVehicles);
               } catch(e) {
                 console.error("Error fetching vehicles:", e);
@@ -231,6 +263,14 @@
                     return true;
                  });
                  
+                 
+                 const sortPref = document.getElementById('filterSort').value;
+                 if (sortPref === 'Price: High to Low') {
+                     filtered.sort((a,b) => parseFloat(b.price) - parseFloat(a.price));
+                 } else {
+                     filtered.sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
+                 }
+
                  renderVehicles(filtered);
               });
             });
