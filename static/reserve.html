@@ -64,8 +64,8 @@
           <li>
             <div class="step-icon"><i class="fas fa-lock"></i></div>
             <div>
-              <h3 style="font-size: 1.1rem; margin-bottom: 5px;">1. Fully Refundable Deposit</h3>
-              <p style="font-size: 0.9rem; color: var(--text-muted);">We take a small holding deposit which immediately removes the car from the market.</p>
+              <h3 style="font-size: 1.1rem; margin-bottom: 5px;">1. Fully Refundable £500 Deposit</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">We take a fully refundable £500 holding deposit which immediately removes the car from the market.</p>
             </div>
           </li>
           <li>
@@ -89,7 +89,7 @@
           <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">We process deposits securely via bank transfer or over the phone to prevent fraud. Please contact our sales director immediately to place a hold.</p>
           
           <div style="display: flex; flex-direction: column; gap: 12px;">
-            <a href="tel:07535953623" class="btn btn-primary" style="font-size: 1.1rem; padding: 16px;"><i class="fas fa-phone-alt"></i> Call Now: 01234 567 890</a>
+            <a href="tel:07535953623" class="btn btn-primary" style="font-size: 1.1rem; padding: 16px;"><i class="fas fa-phone-alt"></i> Call Now: 07535953623</a>
             <a href="https://wa.me/447721733169?text=Hi,%20I%20am%20reaching%20out%20from%20the%20website" class="btn btn-whatsapp" style="font-size: 1.1rem; padding: 16px;"><i class="fab fa-whatsapp"></i> Reserve via WhatsApp</a>
           </div>
         </div>
@@ -134,5 +134,27 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const vehicle = params.get('vehicle');
+      if (vehicle) {
+        const decodedVehicle = decodeURIComponent(vehicle);
+        
+        // Update the subtitle to mention the vehicle
+        const subtitle = document.querySelector('.reserve-card p');
+        if (subtitle) {
+          subtitle.innerHTML = `You are reserving the <strong>${decodedVehicle}</strong>. Due to high demand and rarity of our stock, vehicles are often sold within 48 hours of arriving. Lock yours in today.`;
+        }
+        
+        // Update the WhatsApp button with a bespoke message
+        const waBtn = document.querySelector('.reserve-card a[href*="wa.me/"]');
+        if (waBtn) {
+          const bespokeMsg = `Hi, I want to leave a £500 deposit to reserve the ${decodedVehicle} shown on your website.`;
+          waBtn.href = `https://wa.me/447721733169?text=${encodeURIComponent(bespokeMsg)}`;
+        }
+      }
+    });
+  </script>
 </body>
 </html>
