@@ -125,7 +125,7 @@
               <a href="tel:07535953623" class="btn" style="background-color: var(--bg-primary); color: var(--text-main); border: 1px solid var(--border-color);"><i class="fas fa-phone"></i> Call: 01234 567 890</a>
               <a href="https://wa.me/447721733169?text=Hi,%20I%20am%20reaching%20out%20from%20the%20website" class="btn btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp Us About This Car</a>
               <a href="contact.html" class="btn btn-secondary" id="vEnquireBtn"><i class="fas fa-envelope"></i> Enquire About This Vehicle</a>
-              <a href="/reserve.html" class="btn btn-primary"><i class="fas fa-lock"></i> Reserve This Vehicle Now</a>
+              <a href="/reserve.html" class="btn btn-primary" id="vReserveBtn"><i class="fas fa-lock"></i> Reserve This Vehicle Now</a>
             </div>
             
             <p style="text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 16px;">Secure this vehicle with a fully refundable deposit. Stop anyone else from buying it today.</p>
@@ -230,8 +230,16 @@
         container.style.display = 'flex';
         
         document.title = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
-        document.getElementById('pageTitle').textContent = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
-        const bespokeMsg = `Hi, I am interested in the ${v.year} ${v.make} ${v.model} (£${v.price}) on the website.`;
+        const pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) pageTitle.textContent = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
+        
+        let bespokeMsg = `Hi, I am interested in the ${v.year} ${v.make} ${v.model} (£${v.price}) on the website.`;
+        if (v.status === 'Arriving Soon') {
+             bespokeMsg = `Hi, I want to inquire about the arriving soon ${v.year} ${v.make} ${v.model} (£${v.price}) shown on your website.`;
+        } else if (v.status === 'Reserved') {
+             bespokeMsg = `Hi, I want to inquire about the reserved ${v.year} ${v.make} ${v.model} (£${v.price}) in case the sale falls through.`;
+        }
+        
         const encodedMsg = encodeURIComponent(bespokeMsg);
         document.querySelectorAll('a[href*="wa.me/"]').forEach(a => {
              const base = a.href.split('?')[0];
@@ -239,8 +247,11 @@
         });
 
         
-        // Sold dynamic check inject
+        // Dynamic status checks & UI updates
         const vTitleFull = `${v.year} ${v.make} ${v.model}`;
+        const vEnq = document.getElementById('vEnquireBtn');
+        const vReserve = document.getElementById('vReserveBtn');
+        
         if (v.status === 'Sold') {
              document.getElementById('vTitle').innerHTML = `<span style="background-color: #dc2626; color: white; padding: 4px 12px; border-radius: 6px; margin-right: 15px; font-weight: 800; display: inline-block; transform: translateY(-3px);">SOLD</span> ${vTitleFull}`;
              const imgEl = document.getElementById('vMainImg');
@@ -251,12 +262,34 @@
              imgEl.parentNode.insertBefore(wrapper, imgEl);
              wrapper.appendChild(imgEl);
              wrapper.insertAdjacentHTML('beforeend', `<div style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3); border-radius: var(--radius-md);"><span style="background:rgba(220,38,38,0.9); color:white; padding: 15px 45px; font-size: 3rem; font-weight:900; transform:rotate(-15deg); border: 4px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">SOLD</span></div>`);
+             if (vReserve) vReserve.style.display = 'none';
+             if (vEnq) {
+                 vEnq.innerHTML = `<i class="fas fa-envelope"></i> Enquire About Similar Vehicles`;
+                 vEnq.href = `/contact.html?vehicle=Similar to ${encodeURIComponent(vTitleFull)}&message=${encodeURIComponent('Hi, I saw that the ' + vTitleFull + ' is sold. I would like to inquire about sourcing a similar vehicle.')}`;
+             }
+        } else if (v.status === 'Reserved') {
+             document.getElementById('vTitle').innerHTML = `<span style="background-color: #10b981; color: white; padding: 4px 12px; border-radius: 6px; margin-right: 15px; font-weight: 800; display: inline-block; transform: translateY(-3px);">RESERVED</span> ${vTitleFull}`;
+             if (vReserve) {
+                 vReserve.innerHTML = `<i class="fas fa-envelope"></i> Notify me if sale falls through`;
+                 vReserve.style.backgroundColor = 'var(--accent-green)';
+                 vReserve.style.borderColor = 'var(--accent-green)';
+                 vReserve.href = `/contact.html?vehicle=${encodeURIComponent(vTitleFull)}&message=${encodeURIComponent('Please notify me if the reservation falls through for the ' + vTitleFull + '.')}`;
+             }
+             if (vEnq) {
+                 vEnq.innerHTML = `<i class="fas fa-envelope"></i> Register Backup Interest`;
+                 vEnq.href = `/contact.html?vehicle=${encodeURIComponent(vTitleFull)}&message=${encodeURIComponent('I wish to register backup interest for the reserved ' + vTitleFull + ' in case the sale falls through.')}`;
+             }
+        } else if (v.status === 'Arriving Soon') {
+             document.getElementById('vTitle').innerHTML = `<span style="background-color: #3b82f6; color: white; padding: 4px 12px; border-radius: 6px; margin-right: 15px; font-weight: 800; display: inline-block; transform: translateY(-3px);">ARRIVING SOON</span> ${vTitleFull}`;
+             if (vReserve) vReserve.style.display = 'none';
+             if (vEnq) {
+                 vEnq.innerHTML = `<i class="fas fa-paper-plane"></i> Register Interest in Arrival`;
+                 vEnq.href = `/contact.html?vehicle=${encodeURIComponent(vTitleFull)}&message=${encodeURIComponent('I am interested in the arriving soon ' + vTitleFull + '. Please let me know when it arrives.')}`;
+             }
         } else {
              document.getElementById('vTitle').textContent = vTitleFull;
-        }
-        
-        const vEnq = document.getElementById('vEnquireBtn');
-        if (vEnq) vEnq.href = `/contact.html?vehicle=${encodeURIComponent(vTitleFull)}`;
+             if (vEnq) vEnq.href = `/contact.html?vehicle=${encodeURIComponent(vTitleFull)}`;
+        };
 
         document.getElementById('vPrice').textContent = v.price;
         

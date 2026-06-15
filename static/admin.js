@@ -104,8 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stockTableBody.innerHTML = '';
     vehicles.forEach(v => {
       const tr = document.createElement('tr');
-      // Build Quick Status Dropdown
-      const statusOptions = ['Available', 'Reserved', 'Sold'].map(st => {
+      const statusOptions = ['Available', 'Reserved', 'Sold', 'Arriving Soon'].map(st => {
           return `<option value="${st}" ${v.status === st ? 'selected' : ''}>${st}</option>`;
       }).join('');
       
@@ -117,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td style="font-weight: bold; font-family: monospace;">${v.price}</td>
         <td>
-           <select class="quick-status ${v.status}" onchange="window.quickStatusChange(this, ${v.id})">
+            <select class="quick-status ${(v.status || '').replace(/\s+/g, '-')}" onchange="window.quickStatusChange(this, ${v.id})">
               ${statusOptions}
            </select>
         </td>
@@ -155,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('status', newStatus);
       
       // UI instant feedback
-      selectEl.className = 'quick-status ' + newStatus;
+      selectEl.className = 'quick-status ' + newStatus.replace(/\s+/g, '-');
       
       const res = await fetch(`/api/admin/vehicles/${id}`, {
           method: 'PUT',
