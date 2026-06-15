@@ -220,24 +220,23 @@
                   }
                   
                   let fomoHtml = '';
-                  let fomoOverlay = '';
                   let waMsg = `Hi, I am interested in the ${v.year} ${v.make} ${v.model} (£${v.price}) on the website.`;
                   if (v.status === 'Sold') {
-                     fomoHtml = `<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; justify-content: center;"><span style="background: rgba(220,38,38,0.9); color: white; padding: 10px 30px; font-size: 1.5rem; font-weight: 700; transform: rotate(-15deg); border: 2px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.5);">SOLD</span></div>`;
+                     fomoHtml = `<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10; display: flex; align-items: center; justify-content: center;"><span style="background: rgba(220,38,38,0.9); color: white; padding: 6px 16px; font-size: 1.1rem; font-weight: 700; transform: rotate(-10deg); border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">SOLD</span></div>`;
                   } else if (v.status === 'Reserved') {
                      let resUrl = `/contact.html?vehicle=${encodeURIComponent(v.year + ' ' + v.make + ' ' + v.model)}&message=${encodeURIComponent('I wish to be notified if the reservist pulls out of the sale for the ' + v.year + ' ' + v.make + ' ' + v.model + '.')}`;
-                     fomoHtml = `<div onclick="event.stopPropagation(); window.location.href='${resUrl}'" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(16, 185, 129, 0.95); color: white; text-align: center; padding: 12px; font-weight: 700; z-index: 20; cursor: pointer; backdrop-filter: blur(4px); box-shadow: 0 -4px 15px rgba(0,0,0,0.3);">RESERVED (Click to be notified if sale falls through)</div>`;
+                     fomoHtml = `<div onclick="event.stopPropagation(); window.location.href='${resUrl}'" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(16, 185, 129, 0.95); color: white; text-align: center; padding: 8px; font-size: 0.85rem; font-weight: 700; z-index: 10; cursor: pointer; backdrop-filter: blur(2px);">RESERVED (Click to notify)</div>`;
                   } else if (v.status === 'Arriving Soon') {
                      let resUrl = `/contact.html?vehicle=${encodeURIComponent(v.year + ' ' + v.make + ' ' + v.model)}&message=${encodeURIComponent('I am interested in the arriving soon ' + v.year + ' ' + v.make + ' ' + v.model + '. Please let me know when it arrives.')}`;
-                     fomoHtml = `<div onclick="event.stopPropagation(); window.location.href='${resUrl}'" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(59, 130, 246, 0.95); color: white; text-align: center; padding: 12px; font-weight: 700; z-index: 20; cursor: pointer; backdrop-filter: blur(4px); box-shadow: 0 -4px 15px rgba(0,0,0,0.3);">ARRIVING SOON (Click to Register Interest)</div>`;
+                     fomoHtml = `<div onclick="event.stopPropagation(); window.location.href='${resUrl}'" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(59, 130, 246, 0.95); color: white; text-align: center; padding: 8px; font-size: 0.85rem; font-weight: 700; z-index: 10; cursor: pointer; backdrop-filter: blur(2px);">ARRIVING SOON (Click to enquire)</div>`;
                      waMsg = `Hi, I want to inquire about the arriving soon ${v.year} ${v.make} ${v.model} (£${v.price}) shown on your website.`;
                   }
 
                   grid.innerHTML += `
                     <div class="vehicle-card" onclick="window.location.href='/vehicle/${v.id}'" style="cursor: pointer; position: relative;">
-                      ${fomoHtml}
                       <div class="vehicle-img-wrapper" style="${v.status === 'Sold' ? 'filter: grayscale(100%);' : ''}">
                         ${tagHtml}
+                        ${fomoHtml}
                         <img src="${v.img_url}" alt="${v.make} ${v.model}">
                       </div>
                       <div class="vehicle-info" style="${v.status === 'Sold' ? 'opacity: 0.6;' : ''}">
