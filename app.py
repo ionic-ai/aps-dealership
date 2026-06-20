@@ -286,7 +286,15 @@ def serve_vehicle_seo(id):
         similar = [dict(r) for r in c.fetchall()]
     conn.close()
     if row:
-        return render_template('vehicle.html', vehicle=dict(row), similar=similar)
+        vehicle_dict = dict(row)
+        # Construct absolute URLs for SEO metadata (e.g. WhatsApp previews)
+        img_url = vehicle_dict.get('img_url', '')
+        if img_url.startswith('/'):
+            vehicle_dict['abs_img_url'] = request.url_root.rstrip('/') + img_url
+        else:
+            vehicle_dict['abs_img_url'] = img_url
+        vehicle_dict['abs_url'] = request.url
+        return render_template('vehicle.html', vehicle=vehicle_dict, similar=similar)
     return "Vehicle Not Found", 404
 
 # --- Enquiries Endpoints ---

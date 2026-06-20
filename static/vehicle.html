@@ -3,8 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">{% if vehicle %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% else %}Vehicle Loading...{% endif %} | APSJDMCARSLTD</title>
-  <meta name="description" content="Outstanding condition {% if vehicle %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% endif %} Japanese import. Contact us to reserve today.">
+  <title id="pageTitle">{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving Soon: {% elif vehicle.status == 'Reserved' %}Reserved: {% elif vehicle.status == 'Sold' %}Sold: {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% else %}Vehicle Loading...{% endif %} | APSJDMCARSLTD</title>
+  <meta name="description" content="{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving soon Japanese import: {% elif vehicle.status == 'Reserved' %}Reserved Japanese import (backup deposits welcome): {% elif vehicle.status == 'Sold' %}Sold Japanese import: {% else %}Outstanding condition {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% endif %} Japanese import. Contact us to reserve today.">
+  
+  <!-- Open Graph / Facebook SEO -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{% if vehicle %}{{ vehicle.abs_url }}{% endif %}">
+  <meta property="og:title" content="{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving Soon: {% elif vehicle.status == 'Reserved' %}Reserved: {% elif vehicle.status == 'Sold' %}Sold: {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% else %}Japanese Import Vehicle{% endif %} | APSJDMCARSLTD">
+  <meta property="og:description" content="{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving soon Japanese import: {% elif vehicle.status == 'Reserved' %}Reserved Japanese import (backup deposits welcome): {% elif vehicle.status == 'Sold' %}Sold Japanese import: {% else %}Outstanding condition {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% endif %} Japanese import. Contact us to reserve today.">
+  <meta property="og:image" content="{% if vehicle %}{{ vehicle.abs_img_url }}{% endif %}">
+
+  <!-- Twitter SEO -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="{% if vehicle %}{{ vehicle.abs_url }}{% endif %}">
+  <meta name="twitter:title" content="{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving Soon: {% elif vehicle.status == 'Reserved' %}Reserved: {% elif vehicle.status == 'Sold' %}Sold: {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% else %}Japanese Import Vehicle{% endif %} | APSJDMCARSLTD">
+  <meta name="twitter:description" content="{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving soon Japanese import: {% elif vehicle.status == 'Reserved' %}Reserved Japanese import (backup deposits welcome): {% elif vehicle.status == 'Sold' %}Sold Japanese import: {% else %}Outstanding condition {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% endif %} Japanese import. Contact us to reserve today.">
+  <meta name="twitter:image" content="{% if vehicle %}{{ vehicle.abs_img_url }}{% endif %}">
+
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -229,9 +244,18 @@
         loadingState.style.display = 'none';
         container.style.display = 'flex';
         
-        document.title = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
+        let statusPrefix = '';
+        if (v.status === 'Arriving Soon') {
+             statusPrefix = 'Arriving Soon: ';
+        } else if (v.status === 'Reserved') {
+             statusPrefix = 'Reserved: ';
+        } else if (v.status === 'Sold') {
+             statusPrefix = 'Sold: ';
+        }
+        const titleText = `${statusPrefix}${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
+        document.title = titleText;
         const pageTitle = document.getElementById('pageTitle');
-        if (pageTitle) pageTitle.textContent = `${v.year} ${v.make} ${v.model} | APSJDMCARSLTD`;
+        if (pageTitle) pageTitle.textContent = titleText;
         
         let bespokeMsg = `Hi, I am interested in the ${v.year} ${v.make} ${v.model} (£${v.price}) on the website.`;
         if (v.status === 'Arriving Soon') {
