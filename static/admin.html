@@ -52,11 +52,6 @@
     .filter-bar { display: flex; gap: 15px; margin-bottom: 15px; }
     .filter-bar input { flex: 1; padding: 10px 15px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-main); font-size: 0.875rem; }
   
-    /* Center Nav on Admin */
-    @media (min-width: 900px) {
-      nav.container { position: relative; }
-      .nav-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; width: auto; }
-    }
   </style>
 </head>
 <body>
@@ -68,16 +63,16 @@
         <span>Viewing By Appointment Only</span>
       </div>
     </div>
-    <nav class="container">
-      <a href="/" class="logo" style="display: flex; align-items: center; gap: 10px;"><img src="/logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
-      <div class="nav-links">
+    <div class="container nav-container">
+      <a href="/" class="logo" style="text-decoration: none; display: flex; align-items: center; gap: 10px;"><img src="/logojdm.png" alt="APS JDM CARS LTD" class="nav-logo-img"><div>APS<span>JDM</span>CARS LTD</div></a>
+      <nav class="nav-links">
         <a href="/">Home</a>
         <a href="/stock">Current Stock</a>
         <a href="/about">Why Buy JDM?</a>
         <a href="/contact">Contact</a>
-      </div>
+      </nav>
       <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-    </nav>
+    </div>
   </header>
 
   <div class="admin-container">

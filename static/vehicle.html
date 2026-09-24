@@ -20,6 +20,41 @@
   <meta name="twitter:description" content="{% if vehicle %}{% if vehicle.status == 'Arriving Soon' %}Arriving soon Japanese import: {% elif vehicle.status == 'Reserved' %}Reserved Japanese import (backup deposits welcome): {% elif vehicle.status == 'Sold' %}Sold Japanese import: {% else %}Outstanding condition {% endif %}{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}{% endif %} Japanese import. Contact us to reserve today.">
   <meta name="twitter:image" content="{% if vehicle %}{{ vehicle.abs_img_url }}{% endif %}">
 
+  <!-- Canonical Link -->
+  <link rel="canonical" href="{% if vehicle %}{{ vehicle.abs_url }}{% endif %}">
+
+  {% if vehicle %}
+  <!-- Schema.org Car Structured Data for Google Rich Snippets -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Car",
+    "name": "{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}",
+    "brand": {
+      "@type": "Brand",
+      "name": "{{ vehicle.make }}"
+    },
+    "model": "{{ vehicle.model }}",
+    "vehicleModelDate": "{{ vehicle.year }}",
+    "bodyType": "{{ vehicle.body_type or 'JDM Import' }}",
+    "vehicleTransmission": "{{ vehicle.transmission }}",
+    "image": "{{ vehicle.abs_img_url }}",
+    "itemCondition": "https://schema.org/UsedCondition",
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "GBP",
+      "price": "{{ vehicle.price | replace('£', '') | replace(',', '') }}",
+      "availability": "{% if vehicle.status == 'Sold' %}https://schema.org/OutOfStock{% elif vehicle.status == 'Reserved' %}https://schema.org/LimitedAvailability{% else %}https://schema.org/InStock{% endif %}",
+      "seller": {
+        "@type": "AutoDealer",
+        "name": "APS JDM CARS LTD",
+        "telephone": "07535953623"
+      }
+    }
+  }
+  </script>
+  {% endif %}
+
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>

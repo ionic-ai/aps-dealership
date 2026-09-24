@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, send_from_directory, render_template
+from flask import Flask, request, jsonify, session, send_from_directory, render_template, Response
 from PIL import Image
 import uuid
 from werkzeug.utils import secure_filename
@@ -386,6 +386,52 @@ def delete_enquiry(id):
     conn.commit()
     conn.close()
     return jsonify({"success": True})
+
+# --- SEO Routes: Sitemap & Robots.txt ---
+@app.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    base_url = request.url_root.rstrip('/')
+    static_pages = ['/', '/stock', '/about', '/contact', '/reserve', '/privacy-policy', '/cookie-policy', '/social']
+    
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT id FROM vehicles")
+    vehicle_rows = c.fetchall()
+    conn.close()
+
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    
+    for page in static_pages:
+        priority = "1.0" if page == "/" else ("0.9" if page == "/stock" else "0.7")
+        xml.append('  <url>')
+        xml.append(f'    <loc>{base_url}{page}</loc>')
+        xml.append('    <changefreq>daily</changefreq>')
+        xml.append(f'    <priority>{priority}</priority>')
+        xml.append('  </url>')
+
+    for row in vehicle_rows:
+        xml.append('  <url>')
+        xml.append(f'    <loc>{base_url}/vehicle/{row["id"]}</loc>')
+        xml.append('    <changefreq>weekly</changefreq>')
+        xml.append('    <priority>0.8</priority>')
+        xml.append('  </url>')
+
+    xml.append('</urlset>')
+    return Response('\n'.join(xml), mimetype='application/xml')
+
+@app.route('/robots.txt', methods=['GET'])
+def robots():
+    base_url = request.url_root.rstrip('/')
+    content = f"""User-agent: *
+Disallow: /admin
+Disallow: /api/admin/
+Allow: /
+
+Sitemap: {base_url}/sitemap.xml
+"""
+    return Response(content, mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(port=3000, debug=True)
