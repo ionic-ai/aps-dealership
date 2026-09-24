@@ -126,9 +126,12 @@ def serve_uploads(filename):
     return send_from_directory(upload_folder, filename)
 
 @app.route('/')
-
 def index():
     return send_from_directory('static', 'index.html')
+
+@app.route('/admin')
+def admin_page():
+    return send_from_directory('static', 'admin.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
