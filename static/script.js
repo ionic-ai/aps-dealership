@@ -18,7 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelector('.nav-links');
 
   if (mobileBtn && navLinks) {
-    mobileBtn.addEventListener('click', () => {
+    const closeMenu = () => {
+      navLinks.classList.remove('show');
+      const icon = mobileBtn.querySelector('i');
+      if (icon) {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    };
+
+    mobileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       navLinks.classList.toggle('show');
       const icon = mobileBtn.querySelector('i');
       if (navLinks.classList.contains('show')) {
@@ -27,6 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         icon.classList.remove('fa-times');
         icon.classList.add('fa-bars');
+      }
+    });
+
+    // Close menu when clicking any nav link inside
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Close menu when tapping anywhere outside nav
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('show') && !navLinks.contains(e.target) && !mobileBtn.contains(e.target)) {
+        closeMenu();
       }
     });
   }

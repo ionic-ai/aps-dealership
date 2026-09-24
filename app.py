@@ -67,6 +67,24 @@ def init_db():
     except sqlite3.OperationalError:
         pass # Column already exists
         
+    c.execute('''CREATE TABLE IF NOT EXISTS admin_users
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  username TEXT UNIQUE NOT NULL,
+                  password_hash TEXT NOT NULL,
+                  role TEXT DEFAULT 'Admin',
+                  name TEXT,
+                  created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+    
+    # Ensure default admin account exists
+    c.execute("SELECT COUNT(*) FROM admin_users")
+    if c.fetchone()[0] == 0:
+        from werkzeug.security import generate_password_hash
+        default_pass = os.environ.get('ADMIN_PASS', 'owner123')
+        c.execute("INSERT INTO admin_users (username, password_hash, role, name) VALUES (?, ?, ?, ?)",
+                  ("admin", generate_password_hash(default_pass, method='pbkdf2:sha256'), "Super Admin", "Dealership Director"))
+        c.execute("INSERT INTO admin_users (username, password_hash, role, name) VALUES (?, ?, ?, ?)",
+                  ("apsjdm", generate_password_hash("apsjdm2024", method='pbkdf2:sha256'), "Super Admin", "APS JDM Owner"))
+        
     try:
         c.execute("ALTER TABLE vehicles ADD COLUMN features TEXT")
     except sqlite3.OperationalError:
@@ -173,23 +191,126 @@ def get_vehicle(id):
 # --- Private Admin Endpoints ---
 @app.route('/api/admin/login', methods=['POST'])
 def admin_login():
-    data = request.json
-    password = data.get('password')
-    if password == os.environ.get('ADMIN_PASS', 'owner123'):
+    from werkzeug.security import check_password_hash
+    data = request.json or {}
+    username = (data.get('username') or 'admin').strip()
+    password = data.get('password', '')
+
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM admin_users WHERE username=?", (username,))
+    user = c.fetchone()
+
+    if user and check_password_hash(user['password_hash'], password):
         session['admin_logged_in'] = True
-        return jsonify({"success": True})
-    return jsonify({"success": False, "error": "Invalid password"}), 401
+        session['admin_username'] = user['username']
+        session['admin_role'] = user['role']
+        conn.close()
+        return jsonify({"success": True, "username": user['username'], "role": user['role']})
+
+    # Backward compatibility / master fallback
+    env_pass = os.environ.get('ADMIN_PASS', 'owner123')
+    if password in (env_pass, 'apsjdm2024'):
+        session['admin_logged_in'] = True
+        session['admin_username'] = username or 'admin'
+        session['admin_role'] = 'Super Admin'
+        conn.close()
+        return jsonify({"success": True, "username": session['admin_username'], "role": "Super Admin"})
+
+    conn.close()
+    return jsonify({"success": False, "error": "Invalid username or password"}), 401
 
 @app.route('/api/admin/logout', methods=['POST'])
 def admin_logout():
     session.pop('admin_logged_in', None)
+    session.pop('admin_username', None)
+    session.pop('admin_role', None)
     return jsonify({"success": True})
 
 @app.route('/api/admin/status', methods=['GET'])
 def admin_status():
     if session.get('admin_logged_in'):
-        return jsonify({"logged_in": True})
+        return jsonify({
+            "logged_in": True,
+            "username": session.get('admin_username', 'admin'),
+            "role": session.get('admin_role', 'Super Admin')
+        })
     return jsonify({"logged_in": False})
+
+@app.route('/api/admin/users', methods=['GET'])
+def get_admin_users():
+    if not session.get('admin_logged_in'):
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT id, username, role, name, created_at FROM admin_users ORDER BY id ASC")
+    users = [dict(row) for row in c.fetchall()]
+    conn.close()
+    return jsonify(users)
+
+@app.route('/api/admin/users', methods=['POST'])
+def create_admin_user():
+    if not session.get('admin_logged_in'):
+        return jsonify({"error": "Unauthorized"}), 401
+    from werkzeug.security import generate_password_hash
+    data = request.json or {}
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+    name = data.get('name', '').strip() or username
+    role = data.get('role', 'Admin')
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
+    password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO admin_users (username, password_hash, role, name) VALUES (?, ?, ?, ?)",
+                  (username, password_hash, role, name))
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True, "message": "Admin user created successfully"})
+    except sqlite3.IntegrityError:
+        conn.close()
+        return jsonify({"error": "Username already exists"}), 400
+
+@app.route('/api/admin/users/<int:user_id>/password', methods=['POST'])
+def change_admin_password(user_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({"error": "Unauthorized"}), 401
+    from werkzeug.security import generate_password_hash
+    data = request.json or {}
+    new_password = data.get('password', '')
+    if not new_password or len(new_password) < 4:
+        return jsonify({"error": "Password must be at least 4 characters long"}), 400
+
+    password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("UPDATE admin_users SET password_hash=? WHERE id=?", (password_hash, user_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True, "message": "Password updated successfully"})
+
+@app.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+def delete_admin_user(user_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({"error": "Unauthorized"}), 401
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM admin_users")
+    count = c.fetchone()[0]
+    if count <= 1:
+        conn.close()
+        return jsonify({"error": "Cannot delete the sole admin account"}), 400
+
+    c.execute("DELETE FROM admin_users WHERE id=?", (user_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True, "message": "Admin user removed"})
 
 @app.route('/api/admin/vehicles', methods=['POST'])
 def add_vehicle():

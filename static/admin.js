@@ -34,12 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle Login
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const usernameInput = document.getElementById('usernameInput');
+    const username = usernameInput ? usernameInput.value.trim() : 'admin';
     const password = document.getElementById('passwordInput').value;
     
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
+      body: JSON.stringify({ username, password })
     });
 
     if (res.ok) {
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.style.display = 'inline-flex';
     loadStockTable();
     loadEnquiriesTable();
+    loadUsersTable();
   }
   
   // ECOSYSTEM NAVIGATION TAB SWITCHING LOGIC
@@ -72,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const kpiSection = document.getElementById('kpiSection');
   const inventorySection = document.getElementById('inventorySection');
   const leadsSection = document.getElementById('leadsSection');
+  const usersSection = document.getElementById('usersSection');
+  const addUserBtn = document.getElementById('addUserBtn');
+  const addUserBtnInner = document.getElementById('addUserBtnInner');
   const tabTitle = document.getElementById('tabTitle');
 
   navTabs.forEach(tab => {
@@ -85,19 +91,38 @@ document.addEventListener('DOMContentLoaded', () => {
         kpiSection.style.display = 'flex';
         inventorySection.style.display = 'block';
         leadsSection.style.display = 'block';
+        if (usersSection) usersSection.style.display = 'none';
+        addCarBtn.style.display = 'inline-flex';
+        if (addUserBtn) addUserBtn.style.display = 'none';
         document.querySelector('.dashboard-grid').style.gridTemplateColumns = '3fr 2fr';
       } else if (view === 'inventory-view') {
         tabTitle.innerHTML = `<i class="fas fa-car-side"></i> Vehicle Inventory Catalog`;
         kpiSection.style.display = 'none';
         inventorySection.style.display = 'block';
         leadsSection.style.display = 'none';
+        if (usersSection) usersSection.style.display = 'none';
+        addCarBtn.style.display = 'inline-flex';
+        if (addUserBtn) addUserBtn.style.display = 'none';
         document.querySelector('.dashboard-grid').style.gridTemplateColumns = '1fr';
       } else if (view === 'leads-view') {
         tabTitle.innerHTML = `<i class="fas fa-inbox"></i> Customer Lead Inbox`;
         kpiSection.style.display = 'none';
         inventorySection.style.display = 'none';
         leadsSection.style.display = 'block';
+        if (usersSection) usersSection.style.display = 'none';
+        addCarBtn.style.display = 'none';
+        if (addUserBtn) addUserBtn.style.display = 'none';
         document.querySelector('.dashboard-grid').style.gridTemplateColumns = '1fr';
+      } else if (view === 'users-view') {
+        tabTitle.innerHTML = `<i class="fas fa-users-cog"></i> Admin Team & Security Controls`;
+        kpiSection.style.display = 'none';
+        inventorySection.style.display = 'none';
+        leadsSection.style.display = 'none';
+        if (usersSection) usersSection.style.display = 'block';
+        addCarBtn.style.display = 'none';
+        if (addUserBtn) addUserBtn.style.display = 'inline-flex';
+        document.querySelector('.dashboard-grid').style.gridTemplateColumns = '1fr';
+        loadUsersTable();
       }
     });
   });
@@ -482,5 +507,154 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Failed to clear enquiry.');
       }
   };
+
+  /* USER MANAGEMENT JS LOGIC */
+  const usersTableBody = document.getElementById('usersTableBody');
+  const userModal = document.getElementById('userModal');
+  const addUserForm = document.getElementById('addUserForm');
+  const closeUserModalBtn = document.getElementById('closeUserModalBtn');
+  const cancelUserBtn = document.getElementById('cancelUserBtn');
+
+  const changePasswordModal = document.getElementById('changePasswordModal');
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  const closePasswordModalBtn = document.getElementById('closePasswordModalBtn');
+  const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+
+  async function loadUsersTable() {
+    if (!usersTableBody) return;
+    try {
+      const res = await fetch('/api/admin/users');
+      if (!res.ok) return;
+      const users = await res.json();
+      
+      usersTableBody.innerHTML = '';
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        const dateStr = user.created_at ? new Date(user.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
+        const roleColor = user.role === 'Super Admin' ? 'background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.4);' : 'background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);';
+
+        tr.innerHTML = `
+          <td style="font-weight: bold; color: var(--accent-primary);">#ADM-${user.id}</td>
+          <td><strong style="color: var(--text-main); font-size: 0.95rem;"><i class="fas fa-user-circle" style="margin-right: 6px; color: var(--text-muted);"></i>${escapeHTML(user.username)}</strong></td>
+          <td>${escapeHTML(user.name || 'N/A')}</td>
+          <td><span class="badge" style="${roleColor}">${escapeHTML(user.role || 'Admin')}</span></td>
+          <td><span style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</span></td>
+          <td>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary change-pass-btn" data-id="${user.id}" data-username="${escapeHTML(user.username)}" style="padding: 6px 12px; font-size: 0.78rem;">
+                <i class="fas fa-key" style="color: #f59e0b;"></i> Change Password
+              </button>
+              <button class="delete-btn delete-user-btn" data-id="${user.id}" data-username="${escapeHTML(user.username)}" title="Remove User" style="padding: 6px 10px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px;">
+                <i class="fas fa-trash-alt" style="color: #ef4444;"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        usersTableBody.appendChild(tr);
+      });
+
+      // Change Password buttons
+      document.querySelectorAll('.change-pass-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const username = btn.getAttribute('data-username');
+          document.getElementById('targetUserId').value = id;
+          document.getElementById('targetUsernameLabel').innerHTML = `Updating security password for account <strong>${username}</strong>`;
+          document.getElementById('updatedPassword').value = '';
+          document.getElementById('passwordFormError').classList.add('hidden');
+          changePasswordModal.style.display = 'flex';
+        });
+      });
+
+      // Delete User buttons
+      document.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          const username = btn.getAttribute('data-username');
+          if (confirm(`Are you sure you want to delete administrator user "${username}"?`)) {
+            const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (res.ok) {
+              loadUsersTable();
+            } else {
+              alert(data.error || 'Failed to delete admin user');
+            }
+          }
+        });
+      });
+    } catch (err) {
+      console.error("Failed to load users table:", err);
+    }
+  }
+
+  // Open User Modal
+  const addUserBtnGlobal = document.getElementById('addUserBtn');
+  const addUserBtnInnerGlobal = document.getElementById('addUserBtnInner');
+  [addUserBtnGlobal, addUserBtnInnerGlobal].forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', () => {
+        document.getElementById('addUserForm').reset();
+        document.getElementById('userFormError').classList.add('hidden');
+        userModal.style.display = 'flex';
+      });
+    }
+  });
+
+  if (closeUserModalBtn) closeUserModalBtn.addEventListener('click', () => userModal.style.display = 'none');
+  if (cancelUserBtn) cancelUserBtn.addEventListener('click', () => userModal.style.display = 'none');
+  if (closePasswordModalBtn) closePasswordModalBtn.addEventListener('click', () => changePasswordModal.style.display = 'none');
+  if (cancelPasswordBtn) cancelPasswordBtn.addEventListener('click', () => changePasswordModal.style.display = 'none');
+
+  // Submit New Admin User
+  if (addUserForm) {
+    addUserForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('newUsername').value.trim();
+      const name = document.getElementById('newName').value.trim();
+      const password = document.getElementById('newPassword').value;
+      const role = document.getElementById('newRole').value;
+      const errorDiv = document.getElementById('userFormError');
+
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, name, password, role })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        userModal.style.display = 'none';
+        loadUsersTable();
+      } else {
+        errorDiv.textContent = data.error || 'Error creating user';
+        errorDiv.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Submit Password Update
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('targetUserId').value;
+      const password = document.getElementById('updatedPassword').value;
+      const errorDiv = document.getElementById('passwordFormError');
+
+      const res = await fetch(`/api/admin/users/${userId}/password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        changePasswordModal.style.display = 'none';
+        alert("Password updated successfully!");
+      } else {
+        errorDiv.textContent = data.error || 'Error updating password';
+        errorDiv.classList.remove('hidden');
+      }
+    });
+  }
 
 });
