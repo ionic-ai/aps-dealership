@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
-    specSheetPrintArea.innerHTML = `
-      <div style="border: 4px double #0f172a; padding: 25px; border-radius: 8px; text-align: center;">
+    const posterMarkup = `
+      <div style="border: 4px double #0f172a; padding: 25px; border-radius: 8px; text-align: center; background: white; color: black; font-family: 'Outfit', sans-serif;">
         
         <!-- HEADER LOGO & CONTACT -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 15px; margin-bottom: 20px;">
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           
           <div style="text-align: center; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; min-width: 170px;">
-            <div id="qrCodeWrapper" style="display: flex; justify-content: center; margin-bottom: 8px;"></div>
+            <div class="qrCodeContainer" style="display: flex; justify-content: center; margin-bottom: 8px;"></div>
             <span style="font-size: 0.7rem; font-weight: bold; color: #475569; display: block; max-width: 150px; margin: 0 auto;">Scan with Phone to View Full Listing & Contact Sales</span>
           </div>
         </div>
@@ -272,18 +272,26 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Render Dynamic QR Code using qrcodejs
-    const qrWrapper = document.getElementById('qrCodeWrapper');
-    if (qrWrapper && window.QRCode) {
-      qrWrapper.innerHTML = '';
-      new QRCode(qrWrapper, {
-        text: vehicleUrl,
-        width: 120,
-        height: 120,
-        colorDark: "#0f172a",
-        colorLight: "#ffffff"
-      });
+    specSheetPrintArea.innerHTML = posterMarkup;
+
+    const standaloneContainer = document.getElementById('standalonePrintContainer');
+    if (standaloneContainer) {
+      standaloneContainer.innerHTML = posterMarkup;
     }
+
+    // Render Dynamic QR Codes in both containers
+    document.querySelectorAll('.qrCodeContainer').forEach(el => {
+      el.innerHTML = '';
+      if (window.QRCode) {
+        new QRCode(el, {
+          text: vehicleUrl,
+          width: 120,
+          height: 120,
+          colorDark: "#0f172a",
+          colorLight: "#ffffff"
+        });
+      }
+    });
 
     specSheetModal.style.display = 'flex';
   };
