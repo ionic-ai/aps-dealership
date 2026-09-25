@@ -66,9 +66,58 @@
     .specs-table tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
     .specs-table td { padding: 12px 16px; border: 1px solid var(--border-color); font-size: 0.875rem; }
     .specs-table td:first-child { font-weight: 500; color: var(--text-muted); width: 40%; }
-    .sticky-panel { position: sticky; top: 120px; background-color: var(--bg-secondary); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
-    @media (max-width: 900px) { .vehicle-layout { flex-direction: column; } .gallery-main { aspect-ratio: 4/3; max-height: 400px; } }
-  
+
+    /* ---- Sticky Right Panel ---- */
+    .sticky-panel {
+      position: sticky;
+      top: 90px;            /* snug below the fixed header */
+      background-color: var(--bg-secondary);
+      padding: 30px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      /* Elegant shadow that intensifies as user scrolls, giving a "floating" feel */
+      box-shadow: 0 8px 32px -8px rgba(0,0,0,0.45);
+      transition: box-shadow 0.3s ease;
+      /* max height so it never overflows viewport on very short screens */
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    /* Vehicle layout — MUST use align-items: flex-start so sticky works */
+    .vehicle-layout {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;  /* key: without this sticky collapses to the tallest col */
+    }
+
+    .vehicle-left-col {
+      flex: 2;
+      min-width: 0;
+    }
+
+    .vehicle-right-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Mobile: stack with info panel sandwiched between gallery and description */
+    @media (max-width: 900px) {
+      .vehicle-layout { flex-direction: column; gap: 24px; }
+      .vehicle-left-col  { order: 1; }                /* gallery stays top */
+      .vehicle-right-col { order: 2; width: 100%; }   /* info between gallery & desc */
+      .vehicle-desc-col  { order: 3; }                /* description below info */
+      .gallery-main { aspect-ratio: 4/3; max-height: 400px; }
+      .sticky-panel {
+        position: relative;          /* no sticky on mobile — naturally in flow */
+        top: 0;
+        max-height: none;
+        overflow-y: visible;
+        box-shadow: none;
+      }
+    }
+
     #lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
     #lightbox img { max-width: 95%; max-height: 85vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); object-fit: contain; }
     #lightboxClose { position: absolute; top: 20px; right: 30px; color: white; font-size: 2rem; cursor: pointer; }
@@ -115,10 +164,10 @@
       
       <a href="/stock" class="btn btn-secondary" style="margin-bottom: 35px; display: inline-flex; align-items: center; gap: 8px; position: relative; z-index: 50; padding: 10px 16px;"><i class="fas fa-arrow-left"></i> Back to all stock</a>
       
-      <div class="vehicle-layout" id="dynamicVehicleContainer" style="display: none; gap: 40px;">
+      <div class="vehicle-layout" id="dynamicVehicleContainer" style="display: none;">
         
-        <!-- LEFT COL -->
-        <div style="flex: 2; min-width: 0;">
+        <!-- LEFT COL: Gallery + Description -->
+        <div class="vehicle-left-col">
           <!-- GALLERY WRAPPER WITH CAROUSEL ARROWS & PHOTO COUNTER -->
           <div class="gallery-wrapper" style="position: relative; overflow: hidden; border-radius: var(--radius-md); margin-bottom: 16px; background: #0f172a; border: 1px solid var(--border-color);">
             <img src="" alt="Vehicle Image" class="gallery-main" id="vMainImg" style="width: 100%; max-height: 600px; aspect-ratio: 16/9; object-fit: contain; display: block; margin: 0 auto;">
@@ -140,7 +189,7 @@
 
           <div id="vGallery" style="display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin;"></div>
 
-          <div style="margin-top: 40px;">
+          <div class="vehicle-desc-col" style="margin-top: 40px;">
             <h2 style="font-size: 2rem; margin-bottom: 20px;">Vehicle Description</h2>
             
             <div id="vOverviewText">
@@ -168,8 +217,8 @@
           </div>
         </div>
 
-        <!-- RIGHT COL (Sticky Info & Inline Enquiry) -->
-        <div style="flex: 1; min-width: 0;">
+        <!-- RIGHT COL (Sticky Info & Inline Enquiry) — order:2 on mobile shows between gallery & desc -->
+        <div class="vehicle-right-col">
           <div class="sticky-panel">
             <h1 id="vTitle" style="font-size: 1.75rem; margin-bottom: 10px;"></h1>
             
@@ -595,6 +644,36 @@
         errorState.style.display = 'block';
       }
     });
+  </script>
+  <script>
+    // ---- Sticky panel scroll-shadow effect ----
+    // As user scrolls, the panel shadow deepens to reinforce the "floating" sensation
+    const stickyPanel = document.querySelector('.sticky-panel');
+    if (stickyPanel && window.matchMedia('(min-width: 901px)').matches) {
+      window.addEventListener('scroll', () => {
+        const scrolled = Math.min(window.scrollY / 300, 1); // 0→1 over first 300px
+        const blur    = 8  + scrolled * 24;   // 8px → 32px
+        const spread  = -8 + scrolled * -12;  // -8px → -20px
+        const opacity = 0.45 + scrolled * 0.35; // 0.45 → 0.8
+        stickyPanel.style.boxShadow = `0 ${blur}px ${blur * 2}px ${spread}px rgba(0,0,0,${opacity.toFixed(2)})`;
+      }, { passive: true });
+    }
+
+    // ---- Touch swipe for mobile gallery ----
+    const galleryWrapper = document.querySelector('.gallery-wrapper');
+    if (galleryWrapper) {
+      let touchStartX = 0;
+      galleryWrapper.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+      galleryWrapper.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 40) {
+          const btn = diff > 0
+            ? document.getElementById('nextImgBtn')
+            : document.getElementById('prevImgBtn');
+          if (btn) btn.click();
+        }
+      }, { passive: true });
+    }
   </script>
 </body>
 </html>
